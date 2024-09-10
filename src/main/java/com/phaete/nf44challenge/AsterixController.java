@@ -1,44 +1,45 @@
 package com.phaete.nf44challenge;
 
+import org.springframework.data.mongodb.core.aggregation.SetWindowFieldsOperation;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/asterix")
 public class AsterixController {
 
-    private final AsterixCharacterRepo repo;
+    private final AsterixService asterixService;
 
-    public AsterixController(AsterixCharacterRepo repo) {
-        this.repo = repo;
+    public AsterixController(AsterixService asterixService) {
+        this.asterixService = asterixService;
     }
 
     @GetMapping
-    public List<AsterixCharacter> getAssortedCharacters() {
-        return repo.findAll();
+    public List<AsterixCharacter> getAllCharacters() {
+        return asterixService.findAll();
     }
 
     @GetMapping("/{id}")
     public Optional<AsterixCharacter> getCharacterById(@PathVariable String id) {
-        return repo.findById(id);
+        return asterixService.findById(id);
     }
 
     @PostMapping
-    public void saveCharacter(@RequestBody AsterixCharacter character) {
-        repo.save(character);
+    public DTOAsterixCharacter saveCharacter(@RequestBody DTOAsterixCharacter dtoCharacter) {
+        AsterixCharacter character = asterixService.save(dtoCharacter);
+        return new DTOAsterixCharacter(character.name(), character.age(), character.profession());
     }
 
     @PutMapping
-    public void updateCharacter(@RequestBody AsterixCharacter character) {
-        if (repo.existsById(character.id())) {
-            repo.save(character);
-        }
+    public boolean updateCharacter(@RequestBody AsterixCharacter character) {
+        return asterixService.updateCharacter(character);
     }
 
     @DeleteMapping()
-    public void deleteCharacter(@RequestBody AsterixCharacter character) {
-        repo.deleteById(character.id());
+    public boolean deleteCharacter(@RequestBody AsterixCharacter character) {
+        return asterixService.deleteById(character.id());
     }
 }
