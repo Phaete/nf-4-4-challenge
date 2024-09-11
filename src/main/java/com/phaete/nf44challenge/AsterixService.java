@@ -3,7 +3,7 @@ package com.phaete.nf44challenge;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 public class AsterixService {
@@ -20,29 +20,22 @@ public class AsterixService {
         return repo.findAll();
     }
 
-    public Optional<AsterixCharacter> findById(String id) {
-        return repo.findById(id);
+    public AsterixCharacter findById(String id) {
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Character with id " + id + " not found"));
     }
 
     public AsterixCharacter save(DTOAsterixCharacter character) {
         return repo.save(new AsterixCharacter(idService.generateId(), character.name(), character.age(), character.profession()));
     }
 
-    public boolean updateCharacter(AsterixCharacter character) {
-        if (!repo.existsById(character.id())) {
-            return false;
-        } else {
-            repo.save(character);
-            return true;
-        }
+    public AsterixCharacter updateCharacterById(String id, DTOAsterixCharacter dtoAsterixCharacter) {
+        AsterixCharacter characterToBeUpdated = findById(id); // if exception, get out of update
+        return repo.save(new AsterixCharacter(characterToBeUpdated.id(), dtoAsterixCharacter.name(), dtoAsterixCharacter.age(), dtoAsterixCharacter.profession()));
     }
 
     public boolean deleteById(String id) {
-        if (!repo.existsById(id)) {
-            return false;
-        } else {
-            repo.deleteById(id);
-            return true;
-        }
+        AsterixCharacter characterToBeDeleted = findById(id); // if exception, get out of delete
+        repo.deleteById(characterToBeDeleted.id());
+        return true;
     }
 }

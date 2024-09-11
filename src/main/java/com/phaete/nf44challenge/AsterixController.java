@@ -21,7 +21,7 @@ public class AsterixController {
     }
 
     @GetMapping("/{id}")
-    public Optional<AsterixCharacter> getCharacterById(@PathVariable String id) {
+    public AsterixCharacter getCharacterById(@PathVariable String id) {
         return asterixService.findById(id);
     }
 
@@ -31,9 +31,12 @@ public class AsterixController {
         return new DTOAsterixCharacter(character.name(), character.age(), character.profession());
     }
 
-    @PutMapping
-    public boolean updateCharacter(@RequestBody AsterixCharacter character) {
-        return asterixService.updateCharacter(character);
+    @PutMapping("/{id}")
+    public AsterixCharacter updateCharacter(
+            @PathVariable String id,
+            @RequestBody DTOAsterixCharacter character
+    ) {
+        return asterixService.updateCharacterById(id, character);
     }
 
     @DeleteMapping()
