@@ -4,14 +4,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AsterixService {
 
     private final AsterixCharacterRepo repo;
+    private final IdService idService;
 
-    public AsterixService(AsterixCharacterRepo repo) {
+    public AsterixService(AsterixCharacterRepo repo, IdService idService) {
+        this.idService = idService;
         this.repo = repo;
     }
 
@@ -24,7 +25,7 @@ public class AsterixService {
     }
 
     public AsterixCharacter save(DTOAsterixCharacter character) {
-        return repo.save(new AsterixCharacter(UUID.randomUUID().toString(), character.name(), character.age(), character.profession()));
+        return repo.save(new AsterixCharacter(idService.generateId(), character.name(), character.age(), character.profession()));
     }
 
     public boolean updateCharacter(AsterixCharacter character) {
