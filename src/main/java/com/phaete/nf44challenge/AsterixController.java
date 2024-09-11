@@ -3,10 +3,9 @@ package com.phaete.nf44challenge;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/asterix")
+@RequestMapping("/api/asterix")
 public class AsterixController {
 
     private final AsterixService asterixService;
@@ -39,8 +38,8 @@ public class AsterixController {
         return asterixService.updateCharacterById(id, character);
     }
 
-    @DeleteMapping()
-    public boolean deleteCharacter(@RequestBody AsterixCharacter character) {
-        return asterixService.deleteById(character.id());
+    @DeleteMapping("/{id}")
+    public boolean deleteCharacterById(@PathVariable String id) {
+        return asterixService.deleteById(id);
     }
 }
